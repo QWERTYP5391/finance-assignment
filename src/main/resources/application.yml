@@ -1,3 +1,12 @@
 api-endpoint:
   aapl: http://35.185.32.97/quote/AAPL
 
+fixed-rate:
+  change-in-market: 5000
+  highest-change-in-market: 5000
+
+spring:
+  task:
+    scheduling:
+      pool:
+        size: 10
