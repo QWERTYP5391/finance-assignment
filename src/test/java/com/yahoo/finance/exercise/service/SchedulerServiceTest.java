@@ -1,11 +1,14 @@
 package com.yahoo.finance.exercise.service;
 
+import com.yahoo.finance.exercise.model.QuoteAggregate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.*;
 
@@ -35,7 +38,7 @@ public class SchedulerServiceTest {
     @Test
     public void testPrintHighestChangeInMarketCapitalization() {
 
-        when(aaplService.calculateHighestChangeInMarketCapitalization()).thenReturn(DUMMY_RESULT);
+        when(aaplService.calculateHighestChangeInMarketCapitalization()).thenReturn(new QuoteAggregate(0.0, LocalDateTime.now()));
 
         schedulerService.printHighestChangeInMarketCapitalization();
 

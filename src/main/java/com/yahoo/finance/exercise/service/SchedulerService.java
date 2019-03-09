@@ -1,5 +1,6 @@
 package com.yahoo.finance.exercise.service;
 
+import com.yahoo.finance.exercise.model.QuoteAggregate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,19 +26,13 @@ public class SchedulerService {
 
     @Scheduled(fixedRateString = "${fixed-rate.change-in-market}")
     public void printChangeInMarketCapitalization() {
-        printOutput("This is the change in market capitalization: ", aaplService.calculateChangeInMarketCapitalization(), TimeUnit.MILLISECONDS.toSeconds(fixedRateForChangeInMarket));
+        log.info("This is the current change in market capitalization: {} after {} seconds ", aaplService.calculateChangeInMarketCapitalization(), TimeUnit.MILLISECONDS.toSeconds(fixedRateForChangeInMarket));
 
     }
 
     @Scheduled(fixedRateString = "${fixed-rate.highest-change-in-market}")
     public void printHighestChangeInMarketCapitalization() {
-        printOutput("This is the highest change in market capitalization: ", aaplService.calculateHighestChangeInMarketCapitalization(), TimeUnit.MILLISECONDS.toSeconds(fixedRateForHighestChangeInMarket));
-
+        QuoteAggregate highestChangeInMarketCapitalization = aaplService.calculateHighestChangeInMarketCapitalization();
+        log.info("This is the highest change in market capitalization: {}, {} after {} seconds ", highestChangeInMarketCapitalization.getHighestChangeInMarketCapitalization(), highestChangeInMarketCapitalization.getLocalDateTime(), TimeUnit.MILLISECONDS.toSeconds(fixedRateForHighestChangeInMarket));
     }
-
-    private void printOutput(String s, double v, long l) {
-        log.info(s + v + " after " + l + " seconds");
-    }
-
-
 }

@@ -14,7 +14,7 @@ public class Quote {
     @JsonProperty("sharesOutstanding")
     private double sharesOutstanding;
 
-    public double getMarketCapitalization(){
+    public double getMarketCapitalization() {
         return regularMarketPrice * sharesOutstanding;
     }
 

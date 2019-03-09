@@ -9,11 +9,11 @@ public class TestUtility {
     public static final String SYMBOL = "AAPL";
     public static final double MAX_MARKET_CAPITALIZATION = 1000000000000d;
 
-    private TestUtility(){
+    private TestUtility() {
 
     }
 
-    public static Quote getRandomQuote(){
+    public static Quote getRandomQuote() {
         Random r = new Random();
 
         double marketCapitalization = getRandomDouble(r);
