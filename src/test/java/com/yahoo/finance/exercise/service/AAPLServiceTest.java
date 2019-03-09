@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 public class AAPLServiceTest {
 
+    public static final String EXCEPTION = "This is a rest client exception";
     @MockBean
     RestTemplate mockRestTemplate;
 
@@ -33,6 +35,8 @@ public class AAPLServiceTest {
         aaplService.setLastMarketCapitalizationForHighestChange(0.0);
         aaplService.setLastChangeInMarketCapitalization(0.0);
         aaplService.setLastMarketCapitalization(0.0);
+        aaplService.setAggregateForHighestChangeInMarketCapitalization(null);
+
     }
 
     @Test
@@ -92,13 +96,55 @@ public class AAPLServiceTest {
     @Test
     public void testCalculateChangeInMarketCapitalizationWithInitialRunZeroQuoteProceedingRunRandomQuote() {
 
-        Quote randomQuote =  new Quote(TestUtility.SYMBOL, 0, 0);
+        Quote quote =  new Quote(TestUtility.SYMBOL, 0, 0);
 
-        when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(randomQuote);
+        when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(quote);
 
         double expected = 0.0;
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(randomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getLastMarketCapitalization(), equalTo(quote.getMarketCapitalization()));
+
+        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+
+        Quote secondRandomQuote = TestUtility.getRandomQuote();
+
+        when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
+
+        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+
+        assertThat(aaplService.getLastMarketCapitalization(), equalTo(secondRandomQuote.getMarketCapitalization()));
+    }
+
+    @Test
+    public void testCalculateChangeInMarketCapitalizationWithInitialNullProceedingRunRandomQuote() {
+
+        when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(null);
+
+        double expected = 0.0;
+
+        assertThat(aaplService.getLastMarketCapitalization(), equalTo(expected));
+
+        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+
+        Quote secondRandomQuote = TestUtility.getRandomQuote();
+
+        when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
+
+        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+
+        assertThat(aaplService.getLastMarketCapitalization(), equalTo(secondRandomQuote.getMarketCapitalization()));
+    }
+
+    @Test
+    public void testCalculateChangeInMarketCapitalizationWithInitialZeroQuoteProceedingRunRandomQuote() {
+
+        Quote quote =  new Quote(TestUtility.SYMBOL, 0, 0);
+
+        when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(quote);
+
+        double expected = 0.0;
+
+        assertThat(aaplService.getLastMarketCapitalization(), equalTo(expected));
 
         assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
 
@@ -225,5 +271,25 @@ public class AAPLServiceTest {
         assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
 
         assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(randomQuote.getMarketCapitalization()));
+    }
+
+    @Test
+    public void testCalculateHighestChangeInMarketCapitalizationWithRestClientException() {
+
+        when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenThrow(new RestClientException(EXCEPTION));
+
+        double expected = 0.0;
+
+        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+    }
+
+    @Test
+    public void testCalculateChangeInMarketCapitalizationWithRestClientException() {
+
+        when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenThrow(new RestClientException(EXCEPTION));
+
+        double expected = 0.0;
+
+        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
     }
 }

@@ -38,6 +38,7 @@ public class AAPLService {
     @Value("${api-endpoint.aapl}")
     private String apiEndpoint;
 
+    @Setter
     private QuoteAggregate aggregateForHighestChangeInMarketCapitalization;
 
     public AAPLService(RestTemplate restTemplate) {
@@ -83,7 +84,7 @@ public class AAPLService {
         }
 
         if (aggregateForHighestChangeInMarketCapitalization == null) {
-            aggregateForHighestChangeInMarketCapitalization = new QuoteAggregate(0, null);
+            aggregateForHighestChangeInMarketCapitalization = new QuoteAggregate(0, LocalDateTime.now());
         }
 
         return aggregateForHighestChangeInMarketCapitalization;
