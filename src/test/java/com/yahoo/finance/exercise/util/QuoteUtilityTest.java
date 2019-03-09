@@ -20,7 +20,7 @@ public class QuoteUtilityTest {
     public void getCalculationOfChangeInMarketCapitalizationWith50and100() {
         double currentValue = 50;
         double lastValue = 100;
-        double expected = 50.0;
+        double expected = -50.0;
 
         assertThat(QuoteUtility.getCalculationOfChangeInMarketCapitalization(currentValue, lastValue), equalTo(expected));
     }
