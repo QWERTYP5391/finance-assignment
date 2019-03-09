@@ -9,7 +9,7 @@ public class QuoteUtility {
             throw new IllegalArgumentException("You cannot divide a number by zero");
         }
 
-        double difference = lastMarketCapitalization - currentMarketCapitalization;
+        double difference = currentMarketCapitalization - lastMarketCapitalization;
 
         return Math.signum(difference) * ((Math.abs(difference)) / lastMarketCapitalization) * PERCENTAGE_TOTAL;
     }
