@@ -1,17 +1,18 @@
 package com.yahoo.finance.exercise.model;
 
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 public class Quote {
 
-    private String symbol;
+    @NonNull private String symbol;
 
-    private double regularMarketPrice;
+    @NonNull private double regularMarketPrice;
 
-    private double sharesOutstanding;
+    @NonNull private double sharesOutstanding;
 
-    public double getMarketCapitilization(){
+    public double getMarketCapitalization(){
         return regularMarketPrice * sharesOutstanding;
     }
 
