@@ -62,7 +62,11 @@ public class AAPLService {
             Quote quote = restTemplate.getForObject(apiEndpoint, Quote.class);
 
             if (quote != null && quote.getMarketCapitalization() != 0 && lastMarketCapitalizationForHighestChange != 0) {
-                highestChangeInMarketCapitalization = Math.max(highestChangeInMarketCapitalization, QuoteUtility.getCalculationOfChangeInMarketCapitalization(quote.getMarketCapitalization(), lastMarketCapitalizationForHighestChange));
+                double calculationOfChangeInMarketCapitalization = QuoteUtility.getCalculationOfChangeInMarketCapitalization(quote.getMarketCapitalization(), lastMarketCapitalizationForHighestChange);
+
+                if(Math.abs(calculationOfChangeInMarketCapitalization) > Math.abs(highestChangeInMarketCapitalization)){
+                    highestChangeInMarketCapitalization = calculationOfChangeInMarketCapitalization;
+                }
             }
 
             if (quote != null && quote.getMarketCapitalization() != 0) {

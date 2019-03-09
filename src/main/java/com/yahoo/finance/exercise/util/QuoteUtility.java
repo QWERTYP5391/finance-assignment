@@ -4,7 +4,13 @@ public class QuoteUtility {
 
     public static final int PERCENTAGE_TOTAL = 100;
 
-    public static double getCalculationOfChangeInMarketCapitalization(Double currentMarketCapitalization, Double lastMarketCapitalization) {
-        return ((Math.abs(lastMarketCapitalization - currentMarketCapitalization)) / lastMarketCapitalization) * PERCENTAGE_TOTAL;
+    public static double getCalculationOfChangeInMarketCapitalization(double currentMarketCapitalization, double lastMarketCapitalization) {
+        if(lastMarketCapitalization == 0){
+            throw new IllegalArgumentException("You cannot divide a number by zero");
+        }
+
+        double difference = lastMarketCapitalization - currentMarketCapitalization;
+
+        return Math.signum(difference) * ((Math.abs(difference)) / lastMarketCapitalization) * PERCENTAGE_TOTAL;
     }
 }
