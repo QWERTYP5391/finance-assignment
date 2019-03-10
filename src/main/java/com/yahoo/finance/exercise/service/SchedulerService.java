@@ -26,16 +26,14 @@ public class SchedulerService {
 
     @Scheduled(fixedDelayString = "${fixed-delay.change-in-market}")
     public void printChangeInMarketCapitalization() {
-        double calculateChangeInMarketCapitalization = aaplService.calculateChangeInMarketCapitalization();
+        double calculateChangeInMarketCapitalization = aaplService.retrieveChangeInMarketCapitalization();
 
-        if (calculateChangeInMarketCapitalization != 0) {
-            log.info("This is the change in market capitalization: {} for the last {} seconds ", calculateChangeInMarketCapitalization, TimeUnit.MILLISECONDS.toSeconds(fixedRateForChangeInMarket));
-        }
+        log.info("This is the change in market capitalization: {} for the last {} seconds ", calculateChangeInMarketCapitalization, TimeUnit.MILLISECONDS.toSeconds(fixedRateForChangeInMarket));
 
         QuoteAggregate aggregateForHighestChangeInMarketCapitalization = aaplService.getAggregateForHighestChangeInMarketCapitalization();
 
         if (aggregateForHighestChangeInMarketCapitalization != null) {
-            log.info("This is the highest change in market capitalization: {}, {}", aggregateForHighestChangeInMarketCapitalization.getHighestChangeInMarketCapitalization(), aggregateForHighestChangeInMarketCapitalization.getLocalDateTime());
+            log.info("This is the highest change in market capitalization: {}, retrieved at {}", aggregateForHighestChangeInMarketCapitalization.getHighestChangeInMarketCapitalization(), aggregateForHighestChangeInMarketCapitalization.getLocalDateTime());
         }
 
     }

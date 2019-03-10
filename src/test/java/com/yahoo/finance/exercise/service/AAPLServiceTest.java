@@ -27,15 +27,18 @@ public class AAPLServiceTest {
     @MockBean
     RestTemplate mockRestTemplate;
 
+    @MockBean
+    SchedulerService schedulerService;
+
     @Autowired
     AAPLService aaplService;
 
     @Before
     public void setUp() {
         aaplService.setHighestChangeInMarketCapitalization(0.0);
-        aaplService.setLastMarketCapitalizationForHighestChange(0.0);
-        aaplService.setLastChangeInMarketCapitalization(0.0);
-        aaplService.setLastMarketCapitalization(0.0);
+        aaplService.setMostRecentMarketCapitalization(0.0);
+        aaplService.setOverallChangeInMarketCapitalization(0.0);
+        aaplService.setLastMarketCapitalizationRetrievedWithinInterval(0.0);
         aaplService.setAggregateForHighestChangeInMarketCapitalization(null);
     }
 
@@ -45,11 +48,13 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(randomQuote);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         double expected = 0.0;
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(randomQuote.getMarketCapitalization()));
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(randomQuote.getMarketCapitalization()));
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
     }
 
     @Test
@@ -58,19 +63,19 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(randomQuote);
 
-        double expected = 0.0;
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
-
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(randomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(randomQuote.getMarketCapitalization()));
 
         Quote secondRandomQuote = TestUtility.getRandomQuote();
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
 
-        expected = QuoteUtility.getCalculationOfChangeInMarketCapitalization(secondRandomQuote.getMarketCapitalization(), randomQuote.getMarketCapitalization());
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        double expected = QuoteUtility.getCalculationOfChangeInMarketCapitalization(secondRandomQuote.getMarketCapitalization(), randomQuote.getMarketCapitalization());
+
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
     }
 
     @Test
@@ -78,19 +83,23 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(null);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         double expected = 0.0;
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(expected));
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
 
         Quote secondRandomQuote = TestUtility.getRandomQuote();
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(secondRandomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(secondRandomQuote.getMarketCapitalization()));
+
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
     }
 
     @Test
@@ -100,19 +109,23 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(quote);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         double expected = 0.0;
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(quote.getMarketCapitalization()));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(quote.getMarketCapitalization()));
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
 
         Quote secondRandomQuote = TestUtility.getRandomQuote();
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(secondRandomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(secondRandomQuote.getMarketCapitalization()));
+
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
     }
 
     @Test
@@ -120,19 +133,25 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(null);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         double expected = 0.0;
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(expected));
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
 
         Quote secondRandomQuote = TestUtility.getRandomQuote();
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(secondRandomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(secondRandomQuote.getMarketCapitalization()));
+
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
+
+
     }
 
     @Test
@@ -142,19 +161,23 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(quote);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         double expected = 0.0;
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(expected));
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
 
         Quote secondRandomQuote = TestUtility.getRandomQuote();
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.getLastMarketCapitalization(), equalTo(secondRandomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(secondRandomQuote.getMarketCapitalization()));
+
+        assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
     }
 
     @Test
@@ -165,7 +188,9 @@ public class AAPLServiceTest {
 
         double expected = 0.0;
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
     }
 
     @Test
@@ -176,19 +201,23 @@ public class AAPLServiceTest {
 
         double expected = 0.0;
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(randomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(randomQuote.getMarketCapitalization()));
 
         Quote secondRandomQuote = TestUtility.getRandomQuote();
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         expected = QuoteUtility.getCalculationOfChangeInMarketCapitalization(secondRandomQuote.getMarketCapitalization(), randomQuote.getMarketCapitalization());
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(secondRandomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(secondRandomQuote.getMarketCapitalization()));
     }
 
     @Test
@@ -196,19 +225,23 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(null);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         double expected = 0.0;
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(expected));
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(expected));
 
         Quote secondRandomQuote = TestUtility.getRandomQuote();
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(secondRandomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(secondRandomQuote.getMarketCapitalization()));
     }
 
     @Test
@@ -218,19 +251,23 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(quote);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         double expected = 0.0;
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(expected));
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(expected));
 
         Quote secondRandomQuote = TestUtility.getRandomQuote();
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondRandomQuote);
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(secondRandomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(secondRandomQuote.getMarketCapitalization()));
     }
 
     @Test
@@ -239,17 +276,21 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(randomQuote);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         double expected = 0.0;
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(randomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(randomQuote.getMarketCapitalization()));
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(null);
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(randomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(randomQuote.getMarketCapitalization()));
     }
 
     @Test
@@ -258,19 +299,23 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(randomQuote);
 
+        aaplService.calculateHighestChangeInMarketCapitalization();
+
         double expected = 0.0;
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(randomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(randomQuote.getMarketCapitalization()));
 
         Quote secondQuote = new Quote(TestUtility.SYMBOL, 0, 0);
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenReturn(secondQuote);
 
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
-        assertThat(aaplService.getLastMarketCapitalizationForHighestChange(), equalTo(randomQuote.getMarketCapitalization()));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
+
+        assertThat(aaplService.getMostRecentMarketCapitalization(), equalTo(randomQuote.getMarketCapitalization()));
     }
 
     @Test
@@ -278,18 +323,10 @@ public class AAPLServiceTest {
 
         when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenThrow(new RestClientException(EXCEPTION));
 
-        double expected = 0.0;
-
-        assertThat(aaplService.calculateHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
-    }
-
-    @Test
-    public void testCalculateChangeInMarketCapitalizationWithRestClientException() {
-
-        when(mockRestTemplate.getForObject(aaplService.getApiEndpoint(), Quote.class)).thenThrow(new RestClientException(EXCEPTION));
+        aaplService.calculateHighestChangeInMarketCapitalization();
 
         double expected = 0.0;
 
-        assertThat(aaplService.calculateChangeInMarketCapitalization(), equalTo(expected));
+        assertThat(aaplService.getAggregateForHighestChangeInMarketCapitalization().getHighestChangeInMarketCapitalization(), equalTo(expected));
     }
 }
