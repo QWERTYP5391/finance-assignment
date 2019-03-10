@@ -22,17 +22,17 @@ public class AAPLService {
 
     @Setter
     @Getter
-    private double lastMarketCapitalizationForHighestChange;
+    private volatile double lastMarketCapitalizationForHighestChange;
 
     @Setter
     private volatile double highestChangeInMarketCapitalization;
 
     @Setter
     @Getter
-    private double lastMarketCapitalization;
+    private volatile double lastMarketCapitalization;
 
     @Setter
-    private double lastChangeInMarketCapitalization;
+    private volatile double lastChangeInMarketCapitalization;
 
     @Getter
     @Value("${api-endpoint.aapl}")
@@ -61,7 +61,7 @@ public class AAPLService {
             log.warn("There was as issue with the given request {}, The issue was caused by {}", apiEndpoint, e.getMessage());
         }
 
-        if (lastChangeInMarketCapitalization > highestChangeInMarketCapitalization) {
+        if (Math.abs(lastChangeInMarketCapitalization) > Math.abs(highestChangeInMarketCapitalization)) {
             highestChangeInMarketCapitalization = lastChangeInMarketCapitalization;
         }
 
@@ -88,7 +88,11 @@ public class AAPLService {
             log.warn("There was as issue with the given request {}, The issue was caused by {}", apiEndpoint, e.getMessage());
         }
 
-        if (aggregateForHighestChangeInMarketCapitalization == null) {
+        if (aggregateForHighestChangeInMarketCapitalization == null && highestChangeInMarketCapitalization != 0) {
+            aggregateForHighestChangeInMarketCapitalization = new QuoteAggregate(highestChangeInMarketCapitalization, LocalDateTime.now());
+        }
+
+        if (aggregateForHighestChangeInMarketCapitalization == null && highestChangeInMarketCapitalization == 0) {
             aggregateForHighestChangeInMarketCapitalization = new QuoteAggregate(0, LocalDateTime.now());
         }
 

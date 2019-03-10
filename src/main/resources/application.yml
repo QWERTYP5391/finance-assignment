@@ -1,11 +1,9 @@
 api-endpoint:
   aapl: http://35.185.32.97/quote/AAPL
 
-fixed-rate:
-  change-in-market: 300000
-
 fixed-delay:
   highest-change-in-market: 5000
+  change-in-market: 10000
 
 spring:
   task:

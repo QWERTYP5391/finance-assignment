@@ -14,7 +14,7 @@ public class SchedulerService {
 
     private AAPLService aaplService;
 
-    @Value("${fixed-rate.change-in-market}")
+    @Value("${fixed-delay.change-in-market}")
     private long fixedRateForChangeInMarket;
 
     @Value("${fixed-delay.highest-change-in-market}")
@@ -24,7 +24,7 @@ public class SchedulerService {
         this.aaplService = aaplService;
     }
 
-    @Scheduled(fixedRateString = "${fixed-rate.change-in-market}")
+    @Scheduled(fixedDelayString = "${fixed-delay.change-in-market}")
     public void printChangeInMarketCapitalization() {
         log.info("This is the change in market capitalization: {} for the last {} seconds ", aaplService.calculateChangeInMarketCapitalization(), TimeUnit.MILLISECONDS.toSeconds(fixedRateForChangeInMarket));
 

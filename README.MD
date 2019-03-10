@@ -19,6 +19,8 @@ like so:
 mvn spring-boot:run
 ```
 
+You will see all information being printed to the console.
+
 Within the `com.yahoo.finance.exercise.config` package is the configuration for the rest client in order to make the api call as well 
 the configuration for the scheduler used to run the two separate task of polling the api ever 5 seconds and printing the highest change 
 and overall change.
