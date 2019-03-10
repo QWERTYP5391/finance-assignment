@@ -18,7 +18,7 @@ public class SchedulerService {
     private AAPLService aaplService;
 
     @Value("${fixed-delay.change-in-market}")
-    private long fixedRateForChangeInMarket;
+    private long fixedDelayForChangeInMarket;
 
     @Value("${fixed-delay.highest-change-in-market}")
     private long fixedDelayForHighestChangeInMarket;
@@ -31,7 +31,7 @@ public class SchedulerService {
     public void printChangeInMarketCapitalization() {
         double calculateChangeInMarketCapitalization = aaplService.retrieveChangeInMarketCapitalization();
 
-        log.info("This is the change in market capitalization: {} for the last {} seconds ", calculateChangeInMarketCapitalization, TimeUnit.MILLISECONDS.toSeconds(fixedRateForChangeInMarket));
+        log.info("This is the change in market capitalization: {} for the last {} seconds ", calculateChangeInMarketCapitalization, TimeUnit.MILLISECONDS.toSeconds(fixedDelayForChangeInMarket));
 
         QuoteAggregate aggregateForHighestChangeInMarketCapitalization = aaplService.getAggregateForHighestChangeInMarketCapitalization();
 
