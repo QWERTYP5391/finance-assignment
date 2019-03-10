@@ -25,7 +25,7 @@ public class AAPLService {
     private double lastMarketCapitalizationForHighestChange;
 
     @Setter
-    private double highestChangeInMarketCapitalization;
+    private volatile double highestChangeInMarketCapitalization;
 
     @Setter
     @Getter
@@ -38,6 +38,7 @@ public class AAPLService {
     @Value("${api-endpoint.aapl}")
     private String apiEndpoint;
 
+    @Getter
     @Setter
     private QuoteAggregate aggregateForHighestChangeInMarketCapitalization;
 
@@ -58,6 +59,10 @@ public class AAPLService {
             }
         } catch (RestClientException e) {
             log.warn("There was as issue with the given request {}, The issue was caused by {}", apiEndpoint, e.getMessage());
+        }
+
+        if (lastChangeInMarketCapitalization > highestChangeInMarketCapitalization) {
+            highestChangeInMarketCapitalization = lastChangeInMarketCapitalization;
         }
 
         return lastChangeInMarketCapitalization;

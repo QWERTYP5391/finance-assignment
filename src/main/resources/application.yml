@@ -3,6 +3,8 @@ api-endpoint:
 
 fixed-rate:
   change-in-market: 300000
+
+fixed-delay:
   highest-change-in-market: 5000
 
 spring:
@@ -10,3 +12,4 @@ spring:
     scheduling:
       pool:
         size: 10
+

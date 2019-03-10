@@ -22,7 +22,8 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 public class AAPLServiceTest {
 
-    public static final String EXCEPTION = "This is a rest client exception";
+    private static final String EXCEPTION = "This is a rest client exception";
+
     @MockBean
     RestTemplate mockRestTemplate;
 
@@ -36,7 +37,6 @@ public class AAPLServiceTest {
         aaplService.setLastChangeInMarketCapitalization(0.0);
         aaplService.setLastMarketCapitalization(0.0);
         aaplService.setAggregateForHighestChangeInMarketCapitalization(null);
-
     }
 
     @Test

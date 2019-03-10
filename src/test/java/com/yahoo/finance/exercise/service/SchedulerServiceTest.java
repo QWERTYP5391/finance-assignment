@@ -17,6 +17,7 @@ import static org.mockito.Mockito.*;
 public class SchedulerServiceTest {
 
     private static final double DUMMY_RESULT = 100.0;
+
     private static final int NUMBER_OF_INVOCATIONS = 1;
 
     @MockBean
@@ -29,9 +30,27 @@ public class SchedulerServiceTest {
     public void testPrintChangeInMarketCapitalization() {
         when(aaplService.calculateChangeInMarketCapitalization()).thenReturn(DUMMY_RESULT);
 
+        when(aaplService.getAggregateForHighestChangeInMarketCapitalization()).thenReturn(new QuoteAggregate(0, LocalDateTime.now()));
+
         schedulerService.printChangeInMarketCapitalization();
 
         verify(aaplService, atLeast(NUMBER_OF_INVOCATIONS)).calculateChangeInMarketCapitalization();
+
+        verify(aaplService, atLeast(NUMBER_OF_INVOCATIONS)).getAggregateForHighestChangeInMarketCapitalization();
+
+    }
+
+    @Test
+    public void testPrintChangeInMarketCapitalizationWithQuoteAggregateNull() {
+        when(aaplService.calculateChangeInMarketCapitalization()).thenReturn(DUMMY_RESULT);
+
+        when(aaplService.getAggregateForHighestChangeInMarketCapitalization()).thenReturn(null);
+
+        schedulerService.printChangeInMarketCapitalization();
+
+        verify(aaplService, atLeast(NUMBER_OF_INVOCATIONS)).calculateChangeInMarketCapitalization();
+
+       verify(aaplService, atLeast(NUMBER_OF_INVOCATIONS)).getAggregateForHighestChangeInMarketCapitalization();
 
     }
 
@@ -40,7 +59,7 @@ public class SchedulerServiceTest {
 
         when(aaplService.calculateHighestChangeInMarketCapitalization()).thenReturn(new QuoteAggregate(0.0, LocalDateTime.now()));
 
-        schedulerService.printHighestChangeInMarketCapitalization();
+        schedulerService.pollApi();
 
         verify(aaplService, atLeast(NUMBER_OF_INVOCATIONS)).calculateHighestChangeInMarketCapitalization();
     }

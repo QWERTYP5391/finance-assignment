@@ -17,8 +17,8 @@ public class SchedulerService {
     @Value("${fixed-rate.change-in-market}")
     private long fixedRateForChangeInMarket;
 
-    @Value("${fixed-rate.highest-change-in-market}")
-    private long fixedRateForHighestChangeInMarket;
+    @Value("${fixed-delay.highest-change-in-market}")
+    private long fixedDelayForHighestChangeInMarket;
 
     public SchedulerService(AAPLService aaplService) {
         this.aaplService = aaplService;
@@ -26,13 +26,20 @@ public class SchedulerService {
 
     @Scheduled(fixedRateString = "${fixed-rate.change-in-market}")
     public void printChangeInMarketCapitalization() {
-        log.info("This is the current change in market capitalization: {} after {} seconds ", aaplService.calculateChangeInMarketCapitalization(), TimeUnit.MILLISECONDS.toSeconds(fixedRateForChangeInMarket));
+        log.info("This is the change in market capitalization: {} for the last {} seconds ", aaplService.calculateChangeInMarketCapitalization(), TimeUnit.MILLISECONDS.toSeconds(fixedRateForChangeInMarket));
+
+        QuoteAggregate aggregateForHighestChangeInMarketCapitalization = aaplService.getAggregateForHighestChangeInMarketCapitalization();
+
+        if (aggregateForHighestChangeInMarketCapitalization != null) {
+            log.info("This is the highest change in market capitalization: {}, {}", aggregateForHighestChangeInMarketCapitalization.getHighestChangeInMarketCapitalization(), aggregateForHighestChangeInMarketCapitalization.getLocalDateTime());
+        }
 
     }
 
-    @Scheduled(fixedRateString = "${fixed-rate.highest-change-in-market}")
-    public void printHighestChangeInMarketCapitalization() {
-        QuoteAggregate highestChangeInMarketCapitalization = aaplService.calculateHighestChangeInMarketCapitalization();
-        log.info("This is the highest change in market capitalization: {}, {} after {} seconds ", highestChangeInMarketCapitalization.getHighestChangeInMarketCapitalization(), highestChangeInMarketCapitalization.getLocalDateTime(), TimeUnit.MILLISECONDS.toSeconds(fixedRateForHighestChangeInMarket));
+    @Scheduled(fixedDelayString = "${fixed-delay.highest-change-in-market}")
+    public void pollApi() {
+        log.info("Polling the API every {} seconds", TimeUnit.MILLISECONDS.toSeconds(fixedDelayForHighestChangeInMarket));
+
+        aaplService.calculateHighestChangeInMarketCapitalization();
     }
 }
