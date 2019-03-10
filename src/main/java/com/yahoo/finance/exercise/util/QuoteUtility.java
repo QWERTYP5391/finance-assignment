@@ -1,5 +1,8 @@
 package com.yahoo.finance.exercise.util;
 
+/**
+ * Utility Class for quick calculations
+ */
 public class QuoteUtility {
 
     public static final int PERCENTAGE_TOTAL = 100;

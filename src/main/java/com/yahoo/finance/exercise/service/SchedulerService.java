@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
+/***
+ * Service that contains tasks to poll the api and print wanted information at configurable interval
+ */
 @Service
 @Slf4j
 public class SchedulerService {

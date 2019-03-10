@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 
 /**
- *
+ * Service that calculates the overall change in market capitalization  and the highest change in market capitalization
  */
 @Service
 @Slf4j
@@ -48,10 +48,6 @@ public class AAPLService {
         this.restTemplate = restTemplate;
     }
 
-    /**
-     *
-     * @return
-     */
     public double retrieveChangeInMarketCapitalization() {
         if (lastMarketCapitalizationRetrievedWithinInterval != 0) {
             overallChangeInMarketCapitalization = QuoteUtility.getCalculationOfChangeInMarketCapitalization(mostRecentMarketCapitalization, lastMarketCapitalizationRetrievedWithinInterval);
