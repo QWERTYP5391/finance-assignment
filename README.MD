@@ -27,7 +27,7 @@ and overall change.
 
 Within the `com.yahoo.finance.exercise.model` package are all the models I used in the project.
 
-Within the `com.yahoo.finance.exercise.model` package is the business logic for handling the 
+Within the `com.yahoo.finance.exercise.service` package is the business logic for handling the 
 AAPL  api as well the scheduling we will like to have.
 
 Within the `com.yahoo.finance.exercise.util` package are utilities that can be used to make quick calculations.
