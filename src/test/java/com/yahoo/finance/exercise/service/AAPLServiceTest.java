@@ -80,6 +80,8 @@ public class AAPLServiceTest {
         expected = QuoteUtility.getCalculationOfChangeInMarketCapitalization(secondRandomQuote.getMarketCapitalization(), randomQuote.getMarketCapitalization());
 
         assertThat(aaplService.retrieveChangeInMarketCapitalization(), equalTo(expected));
+
+        assertThat(aaplService.getLastMarketCapitalizationRetrievedWithinInterval(), equalTo(secondRandomQuote.getMarketCapitalization()));
     }
 
     @Test
