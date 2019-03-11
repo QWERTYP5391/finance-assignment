@@ -49,9 +49,14 @@ public class AAPLService {
     }
 
     public double retrieveChangeInMarketCapitalization() {
+
+        if (lastMarketCapitalizationRetrievedWithinInterval == 0) {
+            lastMarketCapitalizationRetrievedWithinInterval = mostRecentMarketCapitalization;
+        }
+
         if (lastMarketCapitalizationRetrievedWithinInterval != 0) {
             overallChangeInMarketCapitalization = QuoteUtility.getCalculationOfChangeInMarketCapitalization(mostRecentMarketCapitalization, lastMarketCapitalizationRetrievedWithinInterval);
-            lastMarketCapitalizationRetrievedWithinInterval = 0;
+            lastMarketCapitalizationRetrievedWithinInterval = mostRecentMarketCapitalization;
         }
 
         return overallChangeInMarketCapitalization;
@@ -72,9 +77,6 @@ public class AAPLService {
 
             if (quote != null && quote.getMarketCapitalization() != 0) {
                 mostRecentMarketCapitalization = quote.getMarketCapitalization();
-                if (lastMarketCapitalizationRetrievedWithinInterval == 0) {
-                    lastMarketCapitalizationRetrievedWithinInterval = quote.getMarketCapitalization();
-                }
             }
         } catch (RestClientException e) {
             log.warn("There was as issue with the given request {}, The issue was caused by {}", apiEndpoint, e.getMessage());

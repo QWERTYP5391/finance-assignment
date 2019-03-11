@@ -3,7 +3,7 @@ api-endpoint:
 
 fixed-delay:
   highest-change-in-market: 5000
-  change-in-market: 300000
+  change-in-market: 10000
 
 spring:
   task:
