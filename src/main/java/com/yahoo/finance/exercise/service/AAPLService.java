@@ -77,6 +77,9 @@ public class AAPLService {
 
             if (quote != null && quote.getMarketCapitalization() != 0) {
                 mostRecentMarketCapitalization = quote.getMarketCapitalization();
+                if(lastMarketCapitalizationRetrievedWithinInterval == 0){
+                    lastMarketCapitalizationRetrievedWithinInterval = mostRecentMarketCapitalization;
+                }
             }
         } catch (RestClientException e) {
             log.warn("There was as issue with the given request {}, The issue was caused by {}", apiEndpoint, e.getMessage());
